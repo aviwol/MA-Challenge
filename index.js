@@ -1,4 +1,4 @@
-const http = require("http");
+const turbo = require("turbo-http");
 const fs = require('fs');
 const client = require('redis').createClient()
 const cards = JSON.parse(fs.readFileSync('./cards.json'));
@@ -20,28 +20,29 @@ const stringify = fastJson({
   }
 })
 
-const requestListener = async function (req, res) {
-    const requesturl = req.url;
-    if (requesturl.indexOf("/c") > -1){
+
+const server = turbo.createServer(async function (req, res) {
+    requesturl = req.url;
+    if (requesturl.indexOf("/re") > -1){
+        response = '{"ready": true}'
+        res.setHeader('Content-Length', response.length)
+        res.write(response); 
+
+    } else {
         let uuid = requesturl.substr(13);
-        const index = await client.INCR(uuid);
-        let missingCard = cards[index - 1]; 
+        let index = await client.INCR(uuid);
+        let missingCard = cards[index-1]; 
 
         if(missingCard === undefined){
             response = '{"id": "ALL CARDS"}'
+            res.setHeader('Content-Length', 15)
         } else {
-            response = stringify(missingCard);            
-        }
-    
-        res.writeHead(200);
-        res.end(response);
-
-    } else {
-        res.writeHead(200);
-        res.end('{"ready": true}');        
+            response = stringify(missingCard);  
+            res.setHeader('Content-Length', 91)
+        }    
+        res.write(response);        
     }
-};
+})
 
-const server = http.createServer(requestListener);
-server.listen(port, host);
+server.listen(port)
 client.connect();
