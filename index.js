@@ -24,7 +24,11 @@ const indexes = {};
 if(port === 4002){
     max = 100
     start = 50
-} else {
+} else if(port === 3000){
+    max = newCards.length
+    start = 0    
+}
+else {
     max = 50
     start = 0
 }
