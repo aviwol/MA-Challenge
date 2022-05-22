@@ -25,7 +25,7 @@ const server = turbo.createServer(async function (req, res) {
     requesturl = req.url;
     if (requesturl.indexOf("/re") > -1){
         response = '{"ready": true}'
-        res.setHeader('Content-Length', response.length)
+        res.setHeader('Content-Length', 15)
         res.write(response); 
 
     } else {
@@ -35,7 +35,7 @@ const server = turbo.createServer(async function (req, res) {
 
         if(missingCard === undefined){
             response = '{"id": "ALL CARDS"}'
-            res.setHeader('Content-Length', 15)
+            res.setHeader('Content-Length', 19)
         } else {
             response = stringify(missingCard);  
             res.setHeader('Content-Length', 91)
