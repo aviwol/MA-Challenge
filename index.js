@@ -17,6 +17,9 @@ const stringify = fastJson({
   }
 })
 
+newCards = [];
+for(i in cards){newCards.push(stringify(cards[i]))}
+
 const indexes = {};
 if(port === 4002){
     max = 100
@@ -28,27 +31,29 @@ if(port === 4002){
 
 const server = turbo.createServer(async function (req, res) {
     requesturl = req.url;
-    if (requesturl.indexOf("/re") > -1){
+    if (requesturl.indexOf("/r") > -1){
         response = '{"ready": true}'
         res.setHeader('Content-Length', 15)
         res.end(response); 
+        return
+    } 
 
-    } else {
-        if(indexes[requesturl] === undefined){
-            indexes[requesturl] = start
-        }
-        const index = ++indexes[requesturl];
-        let missingCard = cards[index-1]; 
-
-        if(index <= max){
-            response = stringify(missingCard);  
-            res.setHeader('Content-Length', 91)
-        } else {
-            response = '{"id": "ALL CARDS"}'
-            res.setHeader('Content-Length', 19)
-        }    
-        res.end(response);        
+    if(indexes[requesturl] === undefined){
+        indexes[requesturl] = start
     }
+    const index = ++indexes[requesturl];
+    let missingCard = newCards[index-1]; 
+
+    if(index <= max){
+        response = missingCard;  
+        res.setHeader('Content-Length', 91)
+    } else {
+        response = '{"id": "ALL CARDS"}'
+        res.setHeader('Content-Length', 19)
+    }    
+    res.end(response);    
+    return    
+    
 })
 
 server.listen(port)
