@@ -4,8 +4,6 @@ const cards = JSON.parse(fs.readFileSync('./cards.json'));
 const fastJson = require('fast-json-stringify');
 const port = +process.argv[2] || 3000
 
-const host = '127.0.0.1';
-
 const stringify = fastJson({
   title: 'Example Schema',
   type: 'object',
@@ -27,7 +25,6 @@ if(port === 4002){
     max = 50
     start = 0
 }
-
 
 const server = turbo.createServer(async function (req, res) {
     requesturl = req.url;
